@@ -1,22 +1,23 @@
 import streamlit as st
 import google.generativeai as genai
 
-# Load Gemini API key securely from Streamlit secrets
+# 🔐 Configure Gemini with your API key from Streamlit secrets
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
-# Page setup
+# 🌐 Page setup
 st.set_page_config(page_title="Resume Line Quality Checker", layout="centered")
 st.title("📋 Resume Line Quality Checker")
 st.subheader("🧠 Classify and Improve Your Resume Bullets Using AI")
 
-# User input
+# 📝 User input
 resume_line = st.text_area("✍️ Paste a resume line, summary, or bullet point:")
 
-# On submit
+# 🔁 On submit
 if st.button("Check Quality"):
     if resume_line.strip() == "":
         st.warning("Please enter a line to analyze.")
     else:
+        # 🎯 Few-shot prompt
         prompt = f"""
 Analyze the following resume line. Classify its quality, and suggest a better version if needed.
 
@@ -47,10 +48,13 @@ Label:
 """
 
         try:
+            # 🧠 Generate with Gemini Pro
             model = genai.GenerativeModel("gemini-pro")
-            response = model.generate_content(prompt)
+            chat = model.start_chat()
+            response = chat.send_message(prompt)
             output = response.text.strip()
 
+            # 🖥️ Display results
             st.markdown("### 🔍 Classification & Rewrite Suggestion")
             if "Suggested Rewrite:" in output:
                 parts = output.split("Suggested Rewrite:")
