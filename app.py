@@ -1,7 +1,7 @@
 import streamlit as st
 import google.generativeai as genai
 
-# 🔐 Configure Gemini with your API key from Streamlit secrets
+# ✅ Configure Gemini API key from Streamlit Secrets
 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
 
 # 🌐 Page setup
@@ -17,9 +17,9 @@ if st.button("Check Quality"):
     if resume_line.strip() == "":
         st.warning("Please enter a line to analyze.")
     else:
-        # 🎯 Few-shot prompt
+        # ✅ FEW-SHOT PROMPT
         prompt = f"""
-Analyze the following resume line. Classify its quality, and suggest a better version if needed.
+Analyze the following resume line. Classify its quality as either 'Generic' or 'Impactful', and suggest a better version if needed.
 
 Examples:
 
@@ -35,26 +35,18 @@ Line: "Worked in marketing department."
 Label: Generic
 Suggested Rewrite: "Assisted in executing 5 product campaigns, contributing to a 12% increase in lead generation."
 
-Line: "Handled customer inquiries."
-Label: Generic
-Suggested Rewrite: "Resolved 50+ customer inquiries daily with a 98% satisfaction rate, reducing escalations by 25%."
-
-Line: "Optimized supply chain logistics, cutting delivery times by 20%."
-Label: Impactful
-Suggested Rewrite: –
-
 Line: "{resume_line}"
 Label:
 """
 
         try:
-            # 🧠 Generate with Gemini Pro
+            # ✅ Gemini chat interface
             model = genai.GenerativeModel("gemini-pro")
             chat = model.start_chat()
             response = chat.send_message(prompt)
             output = response.text.strip()
 
-            # 🖥️ Display results
+            # ✅ Parse and display result
             st.markdown("### 🔍 Classification & Rewrite Suggestion")
             if "Suggested Rewrite:" in output:
                 parts = output.split("Suggested Rewrite:")
