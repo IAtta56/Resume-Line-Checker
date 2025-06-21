@@ -1,23 +1,23 @@
 import streamlit as st
 import openai
 
-# 🔐 Load OpenAI key from Streamlit Secrets Manager
+# Load API key securely from Streamlit secrets
 openai.api_key = st.secrets["OPENAI_API_KEY"]
 
-# 🌐 Page setup
+# Page setup
 st.set_page_config(page_title="Resume Line Quality Checker", layout="centered")
 st.title("📋 Resume Line Quality Checker")
 st.subheader("🧠 Classify and Improve Your Resume Bullets Using AI")
 
-# 📝 User input
+# User input
 resume_line = st.text_area("✍️ Paste a resume line, summary, or bullet point:")
 
-# 🔁 On submit
+# On submit
 if st.button("Check Quality"):
     if resume_line.strip() == "":
         st.warning("Please enter a line to analyze.")
     else:
-        # 🎯 Few-shot prompt
+        # Few-shot prompt
         prompt = f"""
 Analyze the following resume line. Classify its quality, and suggest a better version if needed.
 
@@ -55,7 +55,6 @@ Line: "Managed $500K budget and reduced operational costs by 15%."
 Label: Impactful
 Suggested Rewrite: –
 
-Additional Examples in Your Format
 Line: "Handled customer inquiries."
 Label: Generic
 Suggested Rewrite: "Resolved 50+ customer inquiries daily with a 98% satisfaction rate, reducing escalations by 25%."
@@ -84,25 +83,26 @@ Line: "Helped with marketing tasks and supported team goals."
 Label: Generic
 Suggested Rewrite: "Supported 3 major marketing initiatives, increasing brand visibility by 10% through targeted email campaigns."
 
+
 Line: "{resume_line}"
 Label:
 """
 
-        # 🧠 Call OpenAI
         try:
+            # New OpenAI Chat API call
             response = openai.chat.completions.create(
-    model="gpt-3.5-turbo",
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant that analyzes resume lines."},
-        {"role": "user", "content": prompt}
-    ],
-    temperature=0.7,
-    max_tokens=150
-)
+                model="gpt-3.5-turbo",
+                messages=[
+                    {"role": "system", "content": "You are a helpful assistant that analyzes resume lines."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.7,
+                max_tokens=150
+            )
 
-output = response.choices[0].message.content.strip()
+            output = response.choices[0].message.content.strip()
 
-            # 🖥️ Display results
+            # Display result
             st.markdown("### 🔍 Classification & Rewrite Suggestion")
             if "Suggested Rewrite:" in output:
                 parts = output.split("Suggested Rewrite:")
